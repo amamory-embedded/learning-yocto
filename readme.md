@@ -9,6 +9,11 @@ This tutorial is not meant to be a complete Yocto reference. The idea is to be t
 
 We use a docker container with Yocto and VNC installed. Check-out the cointerner manual to see it's features and how to install it.
 
+## Building the image for raspberry pi3
+
+$ bitbake core-image-minimal -c populate_sdk
+
+
 ## Creating a Custom Layer
 
 Everywhere you read about Yocto recommends that you create your own layer to dploy your software in the Linux image. So this section goes through this process of creating the layer where your recipes will be added.
@@ -442,7 +447,7 @@ int main()
 
 ```
 
-
+/mnt/yocto/tmp/work/cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi/hellodep/1.0-r0/recipe-sysroot/usr/lib/libhello.a
 
 ## Recipe HelloGit
 
@@ -487,4 +492,15 @@ Build your Image $ bitbake -k core-image-sato -c populate_sdk
 
 Default yocto images
 https://www.yoctoproject.org/docs/current/ref-manual/ref-manual.html#ref-images
+
+
+
+
+
+rootfs
+/mnt/yocto/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-minimal/1.0-r0/rootfs/
+
+
+crosscompiling
+cmake .. -DCMAKE_SYSROOT=/mnt/yocto/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-minimal/1.0-r0/rootfs/
 

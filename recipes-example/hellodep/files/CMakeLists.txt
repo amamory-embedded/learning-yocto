@@ -5,9 +5,12 @@ project (hellodep)
 message (STATUS "CROOOOOOOOOSSS: ${CMAKE_SYSROOT}")
 # tlls the CMake find_*() functions to search for programs, libraries and headers in the target sysroot directory ${CMAKE_SYSROOT}.
 set(CMAKE_FIND_ROOT_PATH ${CMAKE_SYSROOT})
-set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+# Search libraries only under *target* paths.
+#https://stackoverflow.com/questions/41294056/cmake-using-find-package-cross-compiling
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 
 # enforce the depedency to libfred. It must be installed before compiling an application
 find_library(LIBHELLO

@@ -1,16 +1,17 @@
-SUMMARY = "Simple Hello World Cmake application"
+SUMMARY = "Simple Hello World Cmake application that requires a library"
 SECTION = "examples"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
 SRC_URI = "\
             file://CMakeLists.txt \
-            file://hellocmake.c \
+            file://hellodep.c \
         "
 
 S = "${WORKDIR}"
 
-inherit cmake
+inherit cmake logging
 
 EXTRA_OECMAKE = ""
 
+DEPENDS += "libhello"

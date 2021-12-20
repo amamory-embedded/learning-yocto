@@ -17,9 +17,10 @@ set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
 install(TARGETS ${CMAKE_PROJECT_NAME}
 	DESTINATION /usr
 	LIBRARY DESTINATION /usr/lib
-	#ARCHIVE DESTINATION lib
+	#ARCHIVE DESTINATION /usr/lib
 	PUBLIC_HEADER DESTINATION /usr/include
 )
+
 
 # any addition file that needs to be installed
 #install(FILES <filename> DESTINATION <dir>)

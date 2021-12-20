@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.9)
 project (hellodep)
 
+include(GNUInstallDirs)
+
 # tell cmake to search the depedencies in sysroot when cross compiling
 message (STATUS "CROOOOOOOOOSSS: ${CMAKE_SYSROOT}")
 # tlls the CMake find_*() functions to search for programs, libraries and headers in the target sysroot directory ${CMAKE_SYSROOT}.
@@ -17,8 +19,16 @@ find_library(LIBHELLO
     NAMES hello
     # add here any probable location for libhello 
     HINTS 
-        ${CMAKE_SYSROOT}/usr/lib
+        ${CMAKE_SYSROOT}/usr/lib ${CMAKE_INSTALL_LIBDIR}
 )
+
+# find the header
+#find_path(LIBHELLO_HEADER_DIR
+#    NAMES libhello.h
+#    # add here any probable location for libhello 
+#    HINTS 
+#        ${CMAKE_SYSROOT}/usr/include ${CMAKE_INSTALL_INCLUDEDIR}
+#)
 
 #if(NOT LIBHELLO)
 #  message(FATAL_ERROR "You have to compile and install libhello before compiling the hellodep application")
@@ -28,6 +38,7 @@ find_library(LIBHELLO
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/
     ${CMAKE_SYSROOT}/usr/include/
+    ${LIBHELLO_HEADER_DIR}/
 )
 
 # point to the libhello lib dir

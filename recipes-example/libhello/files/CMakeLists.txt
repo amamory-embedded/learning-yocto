@@ -11,7 +11,7 @@ add_library(${CMAKE_PROJECT_NAME} SHARED libhello.c)
 set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
     VERSION ${PROJECT_VERSION}
     SOVERSION 1
-    PUBLIC_HEADER libhello.h)
+    PUBLIC_HEADER hello.h)
 
 # replace LIBRARY by ARCHIVE depending on the library format
 install(TARGETS ${CMAKE_PROJECT_NAME}

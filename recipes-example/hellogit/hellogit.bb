@@ -1,13 +1,10 @@
-DESCRIPTION = "Example Hello World application for Yocto build Using git."
+DESCRIPTION = "Example Hello World application for Yocto build Using git and Autoconf."
 SECTION = "examples"
-DEPENDS = ""
 LICENSE = "MIT"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=96af5705d6f64a88e035781ef00e98a8"
+LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=0ec5801450d6b777d973eb956c021332"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-${PV}:"
-
-SRCREV = "c96b1fdd0767a9a13b9fca9d91fd3975c44c9de4"
-SRC_URI = "git://github.com/gbmhunter/YoctoHelloWorldApp.git"
+SRCREV = "22f4bf448930e5d92195c36a10bdf3662c577699"
+SRC_URI = "git://github.com/amamory-embedded/Hello-World-Autoconf.git"
 
 S = "${WORKDIR}/git"
 

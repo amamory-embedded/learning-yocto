@@ -24,7 +24,7 @@ In addition, there are other default Yocto images besides `core-image-minimal`. 
 
 ## Creating a Custom Layer
 
-Everywhere you read about Yocto recommends that you [create your own layer](source: https://www.yoctoproject.org/docs/current/mega-manual/mega-manual.html#creating-your-own-general-layer)
+Everywhere you read about Yocto recommends that you [create your own layer](https://www.yoctoproject.org/docs/current/mega-manual/mega-manual.html#creating-your-own-general-layer)
 to deploy your software in the Linux image. So this section goes through this process of creating the layer where your recipes will be added.
  
 ```
@@ -74,7 +74,7 @@ do_install() {
 
 ```
 
-The rules `do_compile` and `do_install` are, in practice, only copying a file into the image.
+The rules `do_compile` and `do_install` are, in practice, only copying a file into the image. Next, the recipe is built.
 
 ```
 $ cd ~/rpi/build
@@ -108,7 +108,7 @@ NOTE: Executing Tasks
 NOTE: Tasks Summary: Attempted 570 tasks of which 554 didn't need to be rerun and all succeeded.
 ```
 
-Run the following command to find out the recipe workdir
+Run the following command to find out the recipe workdir:
 
 ```
 $ bitbake -e example | grep ^WORKDIR=
@@ -125,9 +125,9 @@ This link has more information about how to make [a recipe that copies a file in
 
 ## Recipe Hello
 
-As mentioned before, this recipe only runs some python command to print a message. No code is actually compiled.
+As mentioned before, the previous recipe only copies a file into the the Linux image. No code is actually compiled.
 The next step is to create another recipe, this time, compiling a code.
-First, lets create a proper directory structure to save the new recipe:
+First, let's create a proper directory structure to save the new recipe:
 
 ```
 $ cd ~/rpi/build
@@ -258,8 +258,8 @@ $ nano Makefile
 
 ## Recipe HelloCMake
 
-The next recipe shows how to write a recipe for a project with CMake. More info [here](https://github.com/joaocfernandes/Learn-Yocto/blob/master/develop/Recipe-CMake.md)
-First, lets create a proper dir structure to save the new recipe:
+The next recipe shows how to write a recipe for a project with CMake. More info [here](https://github.com/joaocfernandes/Learn-Yocto/blob/master/develop/Recipe-CMake.md).
+First, let's create a proper dir structure to save the new recipe:
 
 ```
 $ cd ~/rpi/build
@@ -349,7 +349,7 @@ inherit cmake
 EXTRA_OECMAKE = ""
 ```
 
-The super fency library:
+The super fancy library:
 
 ```
 $ nano files/hellolib.c
@@ -417,7 +417,7 @@ This example creates and application that uses the library `libhello` defined in
 This example is also built with cmake.
 
 First, create the directories as in the previous examples.
-Name the bitbake file as hellodep.bb. Note in the end of the files includes the depedency clauses among the recipes. DEPEDENCY is for build-time depedencies while RDEPENDECY is for runtime dependencies. 
+Name the bitbake file as hellodep.bb. Note in the end of the files includes the depedency clauses among the recipes. `DEPEDENCY` is for build-time depedencies while `RDEPENDECY` is for runtime dependencies. 
 ```
 SUMMARY = "Simple Hello World Cmake application that requires a library"
 SECTION = "examples"
@@ -522,22 +522,18 @@ This is the bitbake file called `hellogit.bb`. This recipe uses autoconf and mak
 Note that the variables `SRCREV` and `SRC_URI` define, respectively, the commit hash and the git repository URL.
 
 ```
-DESCRIPTION = "Example Hello, World application for Yocto build using git."
+DESCRIPTION = "Example Hello World application for Yocto build Using git and Autoconf."
 SECTION = "examples"
-DEPENDS = ""
 LICENSE = "MIT"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=96af5705d6f64a88e035781ef00e98a8"
+LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=0ec5801450d6b777d973eb956c021332"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-${PV}:"
-
-SRCREV = "c96b1fdd0767a9a13b9fca9d91fd3975c44c9de4"
-SRC_URI = "git://github.com/gbmhunter/YoctoHelloWorldApp.git"
+SRCREV = "22f4bf448930e5d92195c36a10bdf3662c577699"
+SRC_URI = "git://github.com/amamory-embedded/Hello-World-Autoconf.git"
 
 S = "${WORKDIR}/git"
 
 inherit autotools
 
-# The autotools configuration I am basing this on seems to have a problem with a race condition when parallel make is enabled
 PARALLEL_MAKE = ""
 ```
 
@@ -569,7 +565,7 @@ EXTRA_OECMAKE = ""
 Note that this repository names the master branch as `main`, instead of `master`. This way we have to specify the branch name.
 Other than that, we just have to update the hashes (the license and the repository hashes) and inherit cmake.
 
-## Run Linux Build And Test the Custom Apps
+## Building the Linux Image with the Custom Apps
 
 Once all recipes we want ot include into the image where tested separately, the next step is to actuall include them into the image.
 For this, edit `meta-learning/conf/local.conf` to include the following lines
@@ -592,4 +588,54 @@ Next, time for building the recipes togheter.
 $ cd ~/rpi/build
 $ bitbake core-image-minimal
 $ find /mnt/yocto/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-minimal/1.0-r0/rootfs/ -name *hello*
+/mnt/yocto/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-minimal/1.0-r0/rootfs/usr/lib/libhello.so.1.0
+/mnt/yocto/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-minimal/1.0-r0/rootfs/usr/lib/libhello.so.1
+/mnt/yocto/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-minimal/1.0-r0/rootfs/usr/bin/hellodep
+/mnt/yocto/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-minimal/1.0-r0/rootfs/usr/bin/hellocmake
+/mnt/yocto/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-minimal/1.0-r0/rootfs/usr/bin/helloworld
+/mnt/yocto/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-minimal/1.0-r0/rootfs/usr/bin/hellogitcmake
+/mnt/yocto/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-minimal/1.0-r0/rootfs/usr/bin/hellogit
+$ find /mnt/yocto/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-minimal/1.0-r0/rootfs/ -name example
+/mnt/yocto/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-minimal/1.0-r0/rootfs/usr/share/example
 ```
+
+We can see all custom applications and libraries were deployed. We can also check the generated packages for all the custom recipes:
+
+```
+$ ll /mnt/yocto/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-minimal/1.0-r0/oe-rootfs-repo/cortexa7t2hf-neon-vfpv4/ | grep hello
+-rw-r--r-- 3 build build      2144 Dec 17 20:08 hello_1.0-r0_armhf.deb
+-rw-r--r-- 3 build build      2380 Dec 17 20:45 hellocmake_1.0-r0_armhf.deb
+-rw-r--r-- 3 build build      4660 Dec 17 20:45 hellocmake-dbg_1.0-r0_armhf.deb
+-rw-r--r-- 3 build build       864 Dec 17 20:45 hellocmake-dev_1.0-r0_armhf.deb
+-rw-r--r-- 3 build build       976 Dec 17 20:45 hellocmake-src_1.0-r0_armhf.deb
+-rw-r--r-- 3 build build      3632 Dec 17 20:08 hello-dbg_1.0-r0_armhf.deb
+-rw-r--r-- 3 build build      2208 Dec 20 10:50 hellodep_1.0-r0_armhf.deb
+-rw-r--r-- 3 build build      4712 Dec 20 10:50 hellodep-dbg_1.0-r0_armhf.deb
+-rw-r--r-- 3 build build       892 Dec 20 10:50 hellodep-dev_1.0-r0_armhf.deb
+-rw-r--r-- 3 build build      1000 Dec 20 10:50 hellodep-src_1.0-r0_armhf.deb
+-rw-r--r-- 3 build build       856 Dec 17 20:08 hello-dev_1.0-r0_armhf.deb
+-rw-r--r-- 3 build build      2196 Dec 18 19:33 hellogit_1.0-r0_armhf.deb
+-rw-r--r-- 3 build build      2192 Dec 20 15:32 hellogitcmake_1.0-r0_armhf.deb
+-rw-r--r-- 3 build build      4684 Dec 20 15:32 hellogitcmake-dbg_1.0-r0_armhf.deb
+-rw-r--r-- 3 build build       892 Dec 20 15:32 hellogitcmake-dev_1.0-r0_armhf.deb
+-rw-r--r-- 3 build build      1012 Dec 20 15:32 hellogitcmake-src_1.0-r0_armhf.deb
+-rw-r--r-- 3 build build      3672 Dec 18 19:33 hellogit-dbg_1.0-r0_armhf.deb
+-rw-r--r-- 3 build build      1084 Dec 18 19:33 hellogit-dev_1.0-r0_armhf.deb
+-rw-r--r-- 3 build build      1900 Dec 20 15:34 libhello1_1.0-r0_armhf.deb
+-rw-r--r-- 3 build build      2452 Dec 20 15:34 libhello-dbg_1.0-r0_armhf.deb
+-rw-r--r-- 3 build build      1012 Dec 20 15:34 libhello-dev_1.0-r0_armhf.deb
+-rw-r--r-- 3 build build       948 Dec 20 15:34 libhello-src_1.0-r0_armhf.deb
+```
+
+## Running the Custom Apps with QEMU
+
+https://blog.mbedded.ninja/programming/embedded-linux/yocto-project/adding-a-custom-app-to-a-yocto-build/
+
+## Running the Custom Apps in the RPi3
+
+https://george-calin.medium.com/how-to-prepare-a-helloworld-c-recipe-with-yocto-project-1f74c296a777
+
+## TO DO
+
+ - make a cmake module for `libhello`;
+ - how to deploy `libhello-dev` into the image ? this would  include the library headers.

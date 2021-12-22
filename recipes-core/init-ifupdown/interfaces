@@ -35,3 +35,10 @@ iface usb0 inet static
 # Bluetooth networking
 iface bnep0 inet dhcp
 
+#In the case of X11VNC installed, you need to enable server at booting time: /etc/profile file is required, produced by base-files recipe. 
+#For an unknown reason, your wifi may be blocked by rfkill, so you need to unblock and enable it again
+# https://github.com/xiehaitao2016/yocto/blob/272e6400097276822c35bea963ad6fc74889039b/Infotainment-System-Yocto.md
+rfkill unblock wifi
+
+ifconfig wlan0 up
+x11vnc &

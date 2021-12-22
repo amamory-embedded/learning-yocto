@@ -14,7 +14,7 @@ project (hellodep)
 #set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 #set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 
-# enforce the depedency to libfred. It must be installed before compiling an application
+# enforce the depedency to libhello. It must be installed before compiling an application
 #find_library(LIBHELLO
 #    NAMES hello
 #    # add here any probable location for libhello 

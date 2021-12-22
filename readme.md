@@ -725,6 +725,7 @@ Check out more information on these links:
 
 ## TO DO
 
+ - add [kernel module example](https://stackoverflow.com/questions/36188472/yocto-adding-kernel-module-recipe-to-image-but-it-doesnt-load-on-boot);
  - make a [cmake module](https://gitlab.kitware.com/cmake/community/-/wikis/doc/tutorials/How-To-Find-Libraries) for `libhello`;
  - how to deploy `libhello-dev` into the image ? this would  include the library headers.
  - improve the generated Linux configuration:

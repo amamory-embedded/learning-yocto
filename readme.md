@@ -37,13 +37,26 @@ MACHINE ??= "raspberrypi3"
 Next, let's build the main parts of the Linux image: kernel, rootfs, etc. Later we build our custom recipes on top of this build. This step takes a long time ...
 
 ```bash
-$ cd rpi
+$ cd ~/rpi
 $ source /opt/yocto/dunfell/src/poky/oe-init-build-env
+$ cd ~/rpi/build
 $ bitbake core-image-minimal -c populate_sdk
 ```
 
 I am not sure if it is mandatory to include SDK (i.e. `populate_sdk`) in the image. This needs some additional testing in the future.
 In addition, there is other default Yocto images besides `core-image-minimal`. Check the [reference images here](https://www.yoctoproject.org/docs/current/ref-manual/ref-manual.html#ref-images).
+
+
+Otherwise, if you want to just implement these examples and skip the step-by-step process, then run:
+
+```bash
+$ cd ~/rpi
+$ source /opt/yocto/dunfell/src/poky/oe-init-build-env
+$ cd ~/rpi/build
+$ git clone -b dunfell https://github.com/amamory-embedded/learning-yocto.git meta-learning
+$ bitbake-layers add-layer meta-learning
+$ bitbake core-image-minimal -c populate_sdk
+```
 
 ## Add-ons and Configuration for Raspbery Pi 3
 

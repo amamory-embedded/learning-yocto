@@ -29,14 +29,14 @@ In this tutorial we are assuming that the target board is a Raspbery Pi3, but it
 Assuming you are already in the VNC, for actual deployment on a RPI3 processor, we need to change the `MACHINE` variable in `~/rpi/build/conf/local.conf` to  `raspberrypi3` or `raspberrypi3-64`.
 In this tutorial we are assuming the former. If you have a different board, this is the place to specify it.
 
-```
+```cmake
 # This sets the default machine to be qemux86-64 if no other machine is selected:
 MACHINE ??= "raspberrypi3"
 ```
 
 Next, let's build the main parts of the Linux image: kernel, rootfs, etc. Later we build our custom recipes on top of this build. This step takes a long time ...
 
-```
+```bash
 $ cd rpi
 $ source /opt/yocto/dunfell/src/poky/oe-init-build-env
 $ bitbake core-image-minimal -c populate_sdk
@@ -45,12 +45,16 @@ $ bitbake core-image-minimal -c populate_sdk
 I am not sure if it is mandatory to include SDK (i.e. `populate_sdk`) in the image. This needs some additional testing in the future.
 In addition, there is other default Yocto images besides `core-image-minimal`. Check the [reference images here](https://www.yoctoproject.org/docs/current/ref-manual/ref-manual.html#ref-images).
 
+## Add-ons and Configuration for Raspbery Pi 3
+
+Although this tutorial is independent of board, we are using RPi3 due to its availability, pleanty of documentation, and easy access. If you want to have a more complete RPI3 configuration than the one provided by the standard `core-image-minimal` image, please check out the [`meta-myrpi`](https://github.com/amamory-embedded/meta-myrpi). Note that this step is optional, but without it you will end up with a very simple RPi3 configuration, with basically only keyboard and HDMI.  
+
 ## Creating a Custom Layer
 
 Everywhere you read about Yocto recommends that you [create your own layer](https://www.yoctoproject.org/docs/current/mega-manual/mega-manual.html#creating-your-own-general-layer)
 to deploy your software in the Linux image. So this section goes through this process of creating the layer where your recipes will be added.
  
-```
+```bash
 $ bitbake-layers show-layers
 $ bitbake-layers create-layer meta-learning
 $ bitbake-layers add-layer meta-learning
@@ -61,7 +65,7 @@ layer                 path                                      priority
 meta                  /opt/yocto/dunfell/src/poky/meta          5
 meta-poky             /opt/yocto/dunfell/src/poky/meta-poky     5
 meta-yocto-bsp        /opt/yocto/dunfell/src/poky/meta-yocto-bsp  5
-meta-learning         /home/build/rpi/build/meta-learning           6
+meta-learning         /home/build/rpi/build/meta-learning           7
 meta-raspberrypi      /opt/yocto/dunfell/src/meta-raspberrypi   9
 meta-oe               /opt/yocto/dunfell/src/meta-openembedded/meta-oe  6
 meta-networking       /opt/yocto/dunfell/src/meta-openembedded/meta-networking  5
@@ -79,7 +83,7 @@ meta-learning/
 
 Next, we start configuring the recipe as described below.
 
-```
+```bash
 $ ~/rpi/build
 $ cat meta-learning/recipes-example/example/example_0.1.bb
 SUMMARY = "bitbake-layers recipe"
@@ -99,7 +103,7 @@ do_install() {
 
 The rules `do_compile` and `do_install` are, in practice, only copying a file into the image. Next, the recipe is built.
 
-```
+```bash
 $ cd ~/rpi/build
 $ bitbake example
 Parsing recipes: 100% |#################################################################################################################| Time: 0:00:20
@@ -133,7 +137,7 @@ NOTE: Tasks Summary: Attempted 570 tasks of which 554 didn't need to be rerun an
 
 Run the following command to find out the recipe workdir:
 
-```
+```bash
 $ bitbake -e example | grep ^WORKDIR=
 WORKDIR="/mnt/yocto/tmp/work/cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi/example/0.1-r0"
 $ find /mnt/yocto/tmp/work/cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi/example/0.1-r0 -name example
@@ -152,7 +156,7 @@ As mentioned before, the previous recipe only copies a file into the Linux image
 The next step is to create a recipe that compiles a code.
 First, let's create a proper directory structure to save the new recipe:
 
-```
+```bash
 $ cd ~/rpi/build
 $ mkdir meta-learning/recipes-example/hello
 $ cd meta-learning/recipes-example/hello
@@ -182,7 +186,7 @@ Check this other [link](http://www.embeddedlinux.org.cn/OEManual/recipes_example
 
 This is the place to store the source files:
 
-```
+```bash
 $ mkdir files
 $ cd files
 $ nano helloworld.c
@@ -197,7 +201,7 @@ int main()
 ```
 
 The resulting directory tree should be like this one:
-```
+```bash
 :~/rpi/build/meta-learning/recipes-example/hello$ tree
 .
 ├── files
@@ -209,7 +213,7 @@ This recipe created is an example of a recipe where the code is locally stored w
 This is not a usual configuration and is recommended only for testing purposes of small applications.
 Next, return to the build dir and compile the new recipe:
 
-```
+```bash
 $ cd ~/rpi/build
 $ bitbake hello
 $ bitbake -e hello | grep ^WORKDIR=
@@ -222,7 +226,7 @@ $ ll hello*
 
 To install this last application into a newly built image, we need to add the following lines into `meta-learning/conf/local.conf`:
 
-```
+```bash
 # add here the name of the recipes to be included into the image
 IMAGE_INSTALL_append = " example"
 IMAGE_INSTALL_append = " hello"
@@ -236,7 +240,7 @@ Pay attention to the initial space before hello. This space is required.
 The following recipe shows how to write a recipe for a [project with Make](https://www.yoctoproject.org/docs/current/mega-manual/mega-manual.html#new-recipe-makefile-based-package).
 First, let's create a proper dir structure to save the new recipe:
 
-```
+```bash
 $ cd ~/rpi/build
 $ mkdir meta-learning/recipes-example/hellomake
 $ cd meta-learning/recipes-example/hellomake
@@ -264,10 +268,12 @@ do_install() {
 
 This is the place to store the source file and the Makefile:
 
-```
+```bash
 $ mkdir files
 $ cd files
 $ nano helloworld.c
+```
+```c
 #include <stdio.h>
   
 int main()
@@ -284,7 +290,7 @@ $ nano Makefile
 The next recipe shows how to write a recipe for a project with CMake. More info [here](https://github.com/joaocfernandes/Learn-Yocto/blob/master/develop/Recipe-CMake.md).
 First, let's create a proper dir structure to save the new recipe:
 
-```
+```bash
 $ cd ~/rpi/build
 $ mkdir meta-learning/recipes-example/hellocmake
 $ cd meta-learning/recipes-example/hellocmake
@@ -309,10 +315,12 @@ EXTRA_OECMAKE = ""
 
 This is the place to store the source file and the CMakeLists.txt:
 
-```
+```bash
 $ mkdir files
 $ cd files
 $ nano hellocmake.c
+```
+```c
 #include <stdio.h>
   
 int main()
@@ -351,7 +359,7 @@ References:
 
 First, create the directories as the previous examples for the recipe `libhello`. The recipe file has nothing especially related to a library.
 
-```
+```bash
 $ nano hellolib.bb
 
 SUMMARY = "Simple Hello Library with Cmake application"
@@ -374,18 +382,20 @@ EXTRA_OECMAKE = ""
 
 The super fancy library:
 
-```
+```bash
 $ nano files/hellolib.c
- 
+```
+```c
 char * hello()
 {
     return "My Lib";
 }
 ```
 
-```
+```bash
 $ nano files/hello.h
-
+```
+```c
 #ifndef _HELLOLIB_H
 #define _HELLOLIB_H
 char * hello();
@@ -398,9 +408,10 @@ This is because Yocto requires a specific format for libraries, i.e., name must 
 It also requires a library version and an install rule for the library and the headers (if the headers are available).
 
 
-```
+```bash
 $ nano files/CMakeLists.txt
-
+```
+```cmake
 cmake_minimum_required(VERSION 3.9)
 # the project version is required
 project (hello VERSION 1.0 DESCRIPTION "My Hello Library")
@@ -426,7 +437,6 @@ install(TARGETS ${CMAKE_PROJECT_NAME}
 
 # any addition file that needs to be installed
 #install(FILES <filename> DESTINATION <dir>)
-
 ```
 
 Note in the cmkae file that we are forcing the install to use the default paths for libraries and includes.
@@ -441,7 +451,7 @@ This example is also built with cmake.
 
 First, create the directories as in the previous examples.
 Name the bitbake file as hellodep.bb. Note in the end of the files includes the dependency clauses among the recipes. `DEPEDENCY` is for build-time dependencies, while `RDEPENDECY` is for runtime. 
-```
+```bash
 SUMMARY = "Simple Hello World Cmake application that requires a library"
 SECTION = "examples"
 LICENSE = "MIT"
@@ -463,7 +473,7 @@ RDEPENDS_${PN} += "libhello"
 ```
 
 Name the source code as hellodep.c
-```
+```c
 #include <stdio.h>
 #include <hello.h>
   
@@ -478,7 +488,7 @@ And finally, the CMakeLists.txt file. Note that this cmake file is very simplifi
 default `/usr/lib` and `/usr/include` directories. Otherwise, it's recommended to create a cmake module for the library
 so that the user applications can easily find the library with the cmake command `find_package`.
 See the comments in the CMakeLists.txt for further pointers.
-```
+```cmake
 cmake_minimum_required(VERSION 3.9)
 project (hellodep)
 
@@ -495,7 +505,7 @@ INSTALL(TARGETS ${PROJECT_NAME}
 
 Now, let's build the new recipe. Sometimes, if you find an error while building a recipe, it's just a matter of cleaning it before building it again.
 
-```
+```bash
 cd ~/rpi/build
 bitbake hellodep -c cleanall
 bitbake hellodep
@@ -503,7 +513,7 @@ bitbake hellodep
 
 Let's search the generated files for this new recipe:
 
-```
+```bash
 $ find /mnt/yocto/tmp/work/cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi/hellodep/1.0-r0/recipe-sysroot/ -name "*hello*"
 /mnt/yocto/tmp/work/cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi/hellodep/1.0-r0/recipe-sysroot/usr/include/hello.h
 /mnt/yocto/tmp/work/cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi/hellodep/1.0-r0/recipe-sysroot/usr/lib/libhello.so
@@ -515,14 +525,14 @@ $ find /mnt/yocto/tmp/work/cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi/hellodep/1
 We see the library, it's header file, both required to build `hellodep`.
 Next, make sure that the meta-learnning layer.conf file has the following lines to include the recipes to the image:
 
-```
+```bash
 IMAGE_INSTALL_append = " libhello"
 IMAGE_INSTALL_append = " hellodep"
 ```
 
 Then build the Linux image again to include the new recipes into the image.
 
-```
+```bash
 $ bitbake core-image-minimal
 $ find /mnt/yocto/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-minimal/1.0-r0/rootfs/ -name *hello*
 ...
@@ -544,7 +554,7 @@ The directory `files` is not required in this configuration since it does not in
 This is the bitbake file called `hellogit.bb`. This recipe uses autoconf and make.
 Note that the variables `SRCREV` and `SRC_URI` define, respectively, the commit hash and the git repository URL.
 
-```
+```bash
 DESCRIPTION = "Example Hello World application for Yocto build Using git and Autoconf."
 SECTION = "examples"
 LICENSE = "MIT"
@@ -562,14 +572,14 @@ PARALLEL_MAKE = ""
 
 Now, let's test the recipe.
 
-```
+```bash
 $ cd ~/rpi/build
 $ bitbake hellogit
 ```
 
 In the same directory of `hellogit.bb`, let's create another recipe called `hellogitcmake.bb`, which uses cmake instead of autoconf.
 
-```
+```bash
 DESCRIPTION = "Example Hello World application for Yocto build Using git and Cmake."
 SECTION = "examples"
 LICENSE = "MIT"
@@ -593,7 +603,7 @@ Other than that, we just have to update the hashes (the license and the reposito
 Once all recipes we want to include in the image were tested separately, the next step is to actually incorporate them into the image.
 For this, edit `meta-learning/conf/local.conf` to include the following lines:
 
-```
+```bash
 # add here the name of the recipes to be included into the image
 IMAGE_INSTALL_append = " example"
 IMAGE_INSTALL_append = " hello"
@@ -607,7 +617,7 @@ IMAGE_INSTALL_append = " hellogitcmake"
 
 Next, time for building the recipes together.
 
-```
+```bash
 $ cd ~/rpi/build
 $ bitbake core-image-minimal
 $ find /mnt/yocto/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-minimal/1.0-r0/rootfs/ -name *hello*
@@ -624,7 +634,7 @@ $ find /mnt/yocto/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-minimal/1.
 
 We can see all custom applications and libraries were deployed. We can also check the generated packages for all the custom recipes:
 
-```
+```bash
 $ ll /mnt/yocto/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-minimal/1.0-r0/oe-rootfs-repo/cortexa7t2hf-neon-vfpv4/ | grep hello
 -rw-r--r-- 3 build build      2144 Dec 17 20:08 hello_1.0-r0_armhf.deb
 -rw-r--r-- 3 build build      2380 Dec 17 20:45 hellocmake_1.0-r0_armhf.deb
@@ -655,14 +665,14 @@ $ ll /mnt/yocto/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-minimal/1.0-
 For emulating the RPI3 processor with QEMU we need to change the `MACHINE` variable in `~/rpi/build/conf/local.conf`.
 Comment the current assignment to this variable and add the following lines:
 
-```
+```bash
 # This sets the default machine to be qemux86-64 if no other machine is selected:
 MACHINE ??= "qemux86-64"
 ```
 
 Rerun the full image build:
 
-```
+```bash
 $ bitbake core-image-minimal
 ```
 
@@ -673,13 +683,13 @@ This process will take a while ... go for a cup of coffee or Check out more info
 
 After finishing the image built process, run: 
 
-```
+```bash
 runqemu qemux86-64 slirp nographic
 ```
 
 The boot process will start. When QEMU prompt appears, run:
 
-```
+```bash
 root@qemux86-64:~# find /usr -name *hello*
 /usr/lib/libhello.so.1.0
 /usr/lib/libhello.so.1
@@ -696,7 +706,7 @@ We can check all applications generated by the custom recipes. Run `poweroff` wh
 
 After building the image for qemu, we are going to see two different images in the following directory:
 
-```
+```bash
 ~/rpi/build$ ls /mnt/yocto/tmp/deploy/images/
 qemux86-64  raspberrypi3
 ```
@@ -704,20 +714,20 @@ qemux86-64  raspberrypi3
 For actual deployment on a RPI3 processor, we need to change the `MACHINE` variable in `~/rpi/build/conf/local.conf` back to its original, `raspberrypi3` or `raspberrypi3-64`.
 For example:
 
-```
+```bash
 # This sets the default machine to be qemux86-64 if no other machine is selected:
 MACHINE ??= "raspberrypi3"
 ```
 
 It's also recommended to change the output format of the image by adding the following line of the same file:
 
-```
+```bash
 IMAGE_FSTYPES ?= "tar.bz2 ext3 rpi-sdimg"
 ```
 
 After building the image again (this time, it's quick), you will find the following file:
 
-```
+```bash
 ~/rpi/build$ find /mnt/yocto/tmp/deploy/images/raspberrypi3/ -name *.rpi-sdimg
 /mnt/yocto/tmp/deploy/images/raspberrypi3/core-image-minimal-raspberrypi3-20211221153332.rootfs.rpi-sdimg
 /mnt/yocto/tmp/deploy/images/raspberrypi3/core-image-minimal-raspberrypi3.rpi-sdimg
@@ -727,7 +737,7 @@ Remember that the `/mnt/yocto/tmp` is shared between the docker image and the ho
 
 Return to the host computer and run `df` to find out the SD card device (assuming it is `/dev/sdb`) and run:
 
-```
+```bash
 $ sudo dd if=/<host mounting point>/deploy/images/raspberrypi3/core-image-minimal-raspberrypi3.rpi-sdimg of=/dev/sdb bs=4M
 ```
 
@@ -741,13 +751,6 @@ Check out more information on these links:
  - add [kernel module example](https://stackoverflow.com/questions/36188472/yocto-adding-kernel-module-recipe-to-image-but-it-doesnt-load-on-boot);
  - make a [cmake module](https://gitlab.kitware.com/cmake/community/-/wikis/doc/tutorials/How-To-Find-Libraries) for `libhello`;
  - how to deploy `libhello-dev` into the image ? this would  include the library headers.
- - improve the generated Linux configuration:
-    - wifi-ready image
-    - support for [vnc](https://github.com/bmit-pune/meta-toradex-yocto/blob/master/recipes-graphics/vnc/tightvnc_1.3.10.bb);
-    - support for [mender](https://github.com/mendersoftware/meta-mender) for remote updates;
-    - install [preempt_rt kernel](https://github.com/kdoren/linux/tree/rpi_5.15.10-rt24);
-    - install [ROS2](https://github.com/ros/meta-ros/wiki/OpenEmbedded-Build-Instructions) layers, tested with this [tutorial](https://github.com/vmayoral/diving-meta-ros);
-	- install opencv, tf-lite2, and similar ML frameworks.
 
 ## Contributions
 

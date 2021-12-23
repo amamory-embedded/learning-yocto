@@ -9,6 +9,19 @@ This tutorial is not meant to be a complete Yocto reference. The idea is to be t
 
 We use a docker container with Yocto and VNC installed. Check out the [container manual](https://github.com/amamory-embedded/docker-yocto-vnc) to see it's features and how to install it. The first step once the docker image is install is to start its VNC. All the Linux image creation will be done using VNC.
 
+## Dependencies
+
+This layer depends on:
+
+* URI: git://git.yoctoproject.org/poky
+  * branch: master
+  * revision: HEAD
+
+* URI: git://git.openembedded.org/meta-openembedded
+  * layers: meta-oe
+  * branch: master
+  * revision: HEAD
+
 ## Building the image for target board
 
 In this tutorial we are assuming that the target board is a Raspbery Pi3, but it can easily be adapted for the other boards of the family.

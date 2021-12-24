@@ -759,13 +759,20 @@ Check out more information on these links:
  - https://george-calin.medium.com/how-to-prepare-a-helloworld-c-recipe-with-yocto-project-1f74c296a777
  - https://tutorialadda.com/yocto/create-your-own-linux-image-for-the-raspberry-pi-board-using-yocto-project
 
+## To Learn More
+
+ - [Yocto Project Mega-Manual (v3.1 dunfell)](https://www.yoctoproject.org/docs/3.1/mega-manual/mega-manual.html)
+ - [Books about Yocto](https://www.yoctoproject.org/learn/books/) 
+ - https://git.yoctoproject.org/poky/tree/meta-skeleton
+
 ## TO DO
 
- - add *kernel module*: 
+ - [x] add *kernel module*: 
    - [example1](https://stackoverflow.com/questions/36188472/yocto-adding-kernel-module-recipe-to-image-but-it-doesnt-load-on-boot); and 
    - [example2](https://developer.toradex.com/knowledge-base/custom-meta-layers-recipes-images-in-yocto-project#Compile_a_Custom_Kernel_Module);
- - make a [cmake module](https://gitlab.kitware.com/cmake/community/-/wikis/doc/tutorials/How-To-Find-Libraries) for `libhello`;
- - how to deploy `libhello-dev` into the image ? this would  include the library headers.
+ - [ ] add a [linux service](https://git.yoctoproject.org/poky/tree/meta-skeleton/recipes-skeleton/service);
+ - [ ] make a [cmake module](https://gitlab.kitware.com/cmake/community/-/wikis/doc/tutorials/How-To-Find-Libraries) for `libhello`;
+ - [ ] how to deploy `libhello-dev` into the image ? this would  include the library headers.
 
 ## Contributions
 

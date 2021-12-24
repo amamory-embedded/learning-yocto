@@ -611,6 +611,12 @@ EXTRA_OECMAKE = ""
 Note that this repository names the master branch as `main`, instead of `master`. This way, we have to specify the branch name.
 Other than that, we just have to update the hashes (the license and the repository hashes) and inherit cmake.
 
+## Recipe hello-mod
+
+This example (originally from [here](https://developer.toradex.com/knowledge-base/custom-meta-layers-recipes-images-in-yocto-project#Compile_a_Custom_Kernel_Module
+)) is located in `recipes-kernel/hello-mod`. It shows how to add a custom kernel module, in this case using make and git.
+
+
 ## Building the Linux Image with the Custom Apps
 
 Once all recipes we want to include in the image were tested separately, the next step is to actually incorporate them into the image.
@@ -626,6 +632,9 @@ IMAGE_INSTALL_append = " libhello"
 IMAGE_INSTALL_append = " hellodep"
 IMAGE_INSTALL_append = " hellogit"
 IMAGE_INSTALL_append = " hellogitcmake"
+
+# my kernel recipes
+MACHINE_EXTRA_RDEPENDS += "kernel-module-hello"
 ```
 
 Next, time for building the recipes together.
@@ -641,6 +650,7 @@ $ find /mnt/yocto/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-minimal/1.
 /mnt/yocto/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-minimal/1.0-r0/rootfs/usr/bin/helloworld
 /mnt/yocto/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-minimal/1.0-r0/rootfs/usr/bin/hellogitcmake
 /mnt/yocto/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-minimal/1.0-r0/rootfs/usr/bin/hellogit
+/mnt/yocto/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-minimal/1.0-r0/rootfs/lib/modules/5.4.72-v7/extra/hello.ko
 $ find /mnt/yocto/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-minimal/1.0-r0/rootfs/ -name example
 /mnt/yocto/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-minimal/1.0-r0/rootfs/usr/share/example
 ```
@@ -761,9 +771,10 @@ Check out more information on these links:
 
 ## To Learn More
 
- - [Yocto Project Mega-Manual (v3.1 dunfell)](https://www.yoctoproject.org/docs/3.1/mega-manual/mega-manual.html)
- - [Books about Yocto](https://www.yoctoproject.org/learn/books/) 
- - https://git.yoctoproject.org/poky/tree/meta-skeleton
+ - [Yocto Project Mega-Manual (v3.1 dunfell)](https://www.yoctoproject.org/docs/3.1/mega-manual/mega-manual.html);
+ - [Books about Yocto](https://www.yoctoproject.org/learn/books/);
+ - [Ready, Set, Yocto!](https://github.com/jynik/ready-set-yocto);
+ - https://git.yoctoproject.org/poky/tree/meta-skeleton.
 
 ## TO DO
 

@@ -41,6 +41,7 @@ $ cd ~/rpi
 $ source /opt/yocto/dunfell/src/poky/oe-init-build-env
 $ cd ~/rpi/build
 $ bitbake core-image-minimal -c populate_sdk
+$ bitbake core-image-minimal
 ```
 
 I am not sure if it is mandatory to include SDK (i.e. `populate_sdk`) in the image. This needs some additional testing in the future.
@@ -56,7 +57,10 @@ $ cd ~/rpi/build
 $ git clone -b dunfell https://github.com/amamory-embedded/learning-yocto.git meta-learning
 $ bitbake-layers add-layer meta-learning
 $ bitbake core-image-minimal -c populate_sdk
+$ bitbake core-image-minimal
 ```
+
+The last command `bitbake core-image-minimal` will create the packages and the image.
 
 ## Add-ons and Configuration for Raspbery Pi 3
 

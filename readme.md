@@ -778,7 +778,8 @@ Check out more information on these links:
  - [Yocto Project Mega-Manual (v3.1 dunfell)](https://www.yoctoproject.org/docs/3.1/mega-manual/mega-manual.html);
  - [Books about Yocto](https://www.yoctoproject.org/learn/books/);
  - [Ready, Set, Yocto!](https://github.com/jynik/ready-set-yocto);
- - https://git.yoctoproject.org/poky/tree/meta-skeleton.
+ - https://git.yoctoproject.org/poky/tree/meta-skeleton;
+ - [More Yocto templates](https://github.com/yoctocookbook/meta-custom).
 
 ## TO DO
 
